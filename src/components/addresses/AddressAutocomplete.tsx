@@ -114,7 +114,7 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
       <div className="flex flex-col gap-3">
         <div className="w-full">
           <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-            <SelectTrigger className="rounded-full bg-card/50 w-full">
+            <SelectTrigger className="rounded-full bg-card/50 w-full h-11 px-4">
               <SelectValue placeholder="Land wählen" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-none shadow-2xl">
@@ -134,7 +134,7 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="w-full justify-between rounded-full bg-card/50 px-3 font-normal h-10"
+                className="w-full justify-between rounded-full bg-card/50 px-3 font-normal h-11"
               >
                 <div className="flex items-center gap-2 overflow-hidden">
                   <Search className="h-4 w-4 shrink-0 opacity-50" />

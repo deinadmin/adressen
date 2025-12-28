@@ -66,7 +66,7 @@ export const InviteModal = ({ open, onOpenChange }: InviteModalProps) => {
       onOpenChange(val);
       if (!val) setTimeout(reset, 300);
     }}>
-      <DialogContent className="sm:max-w-[400px] rounded-3xl border-none shadow-2xl">
+      <DialogContent className="sm:max-w-[400px] rounded-[2.5rem] border-none shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">
             {createdLink ? "Einladung bereit" : "Neue Einladung erstellen"}
@@ -74,7 +74,7 @@ export const InviteModal = ({ open, onOpenChange }: InviteModalProps) => {
         </DialogHeader>
 
         {!createdLink ? (
-          <div className="space-y-4 py-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                 Einladungscode

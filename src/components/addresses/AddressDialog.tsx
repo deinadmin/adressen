@@ -174,18 +174,20 @@ export const AddressDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden rounded-3xl border-none shadow-2xl p-0">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden rounded-[2.5rem] border-none shadow-2xl p-0">
         <motion.div
           layout
           transition={{ type: "spring", duration: 0.5, bounce: 0.1 }}
           className="p-6"
         >
-          <DialogHeader className="mb-6">
-            <DialogTitle>{address ? "Adresse bearbeiten" : "Neue Adresse hinzufügen"}</DialogTitle>
+          <DialogHeader className="mb-4 flex items-center justify-center h-8">
+            <DialogTitle className="text-xl font-bold tracking-tight">
+              {address ? "Adresse bearbeiten" : "Neue Adresse hinzufügen"}
+            </DialogTitle>
           </DialogHeader>
 
           {!address && (
-            <div className="flex w-full bg-muted/50 rounded-full p-1 mb-8 h-11 relative overflow-hidden">
+            <div className="flex w-full bg-muted/50 rounded-full p-1 mb-4 h-11 relative overflow-hidden">
               <button
                 type="button"
                 onClick={() => setActiveTab("normal")}
@@ -244,7 +246,7 @@ export const AddressDialog = ({
                           <FormItem>
                             <FormLabel>Vorname</FormLabel>
                             <FormControl>
-                              <Input placeholder="Max" className="rounded-full bg-card/50" {...field} />
+                              <Input placeholder="Max" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -257,7 +259,7 @@ export const AddressDialog = ({
                           <FormItem>
                             <FormLabel>Nachname</FormLabel>
                             <FormControl>
-                              <Input placeholder="Mustermann" className="rounded-full bg-card/50" {...field} />
+                              <Input placeholder="Mustermann" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -266,7 +268,7 @@ export const AddressDialog = ({
                     </div>
 
                     {/* 2. Address Input Switch Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-6 mt-4">
                       <div className="flex items-center justify-between">
                         <FormLabel className="text-muted-foreground uppercase text-[10px] tracking-widest font-bold">
                           {showManual ? "Manuelle Adresseingabe" : "Adresse suchen"}
@@ -330,7 +332,7 @@ export const AddressDialog = ({
                                     <FormItem>
                                       <FormLabel>Straße</FormLabel>
                                       <FormControl>
-                                        <Input placeholder="Musterstraße" className="rounded-full bg-card/50" {...field} />
+                                        <Input placeholder="Musterstraße" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                                       </FormControl>
                                       <FormMessage />
                                     </FormItem>
@@ -344,7 +346,7 @@ export const AddressDialog = ({
                                   <FormItem>
                                     <FormLabel>Nr.</FormLabel>
                                     <FormControl>
-                                      <Input placeholder="12a" className="rounded-full bg-card/50" {...field} />
+                                      <Input placeholder="12a" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
@@ -360,7 +362,7 @@ export const AddressDialog = ({
                                   <FormItem>
                                     <FormLabel>PLZ</FormLabel>
                                     <FormControl>
-                                      <Input placeholder="12345" className="rounded-full bg-card/50" {...field} />
+                                      <Input placeholder="12345" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
@@ -374,7 +376,7 @@ export const AddressDialog = ({
                                     <FormItem>
                                       <FormLabel>Stadt</FormLabel>
                                       <FormControl>
-                                        <Input placeholder="Musterstadt" className="rounded-full bg-card/50" {...field} />
+                                        <Input placeholder="Musterstadt" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                                       </FormControl>
                                       <FormMessage />
                                     </FormItem>
@@ -390,7 +392,7 @@ export const AddressDialog = ({
                                 <FormItem>
                                   <FormLabel>Land</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="Deutschland" className="rounded-full bg-card/50" {...field} />
+                                    <Input placeholder="Deutschland" className="rounded-full bg-card/50 h-11 px-4" {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>

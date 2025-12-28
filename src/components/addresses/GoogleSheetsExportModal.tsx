@@ -48,7 +48,7 @@ export const GoogleSheetsExportModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] rounded-3xl border-none shadow-2xl">
+      <DialogContent className="sm:max-w-[400px] rounded-[2.5rem] border-none shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">Google Sheets Export</DialogTitle>
         </DialogHeader>

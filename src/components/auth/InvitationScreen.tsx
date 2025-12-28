@@ -62,7 +62,7 @@ export const InvitationScreen = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md border-none shadow-2xl bg-card/50 backdrop-blur-sm rounded-3xl overflow-hidden">
+      <Card className="w-full max-w-md border-none shadow-2xl bg-card/50 backdrop-blur-sm rounded-[2.5rem] overflow-hidden">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
             <Lock className="w-6 h-6 text-primary" />
@@ -85,7 +85,7 @@ export const InvitationScreen = () => {
             </div>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full rounded-full h-12 text-lg font-bold shadow-lg mt-2"
               disabled={isValidating || !code.trim()}
             >
               {isValidating ? (
