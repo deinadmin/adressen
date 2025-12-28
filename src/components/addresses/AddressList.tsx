@@ -167,7 +167,7 @@ export const AddressList = () => {
 
   return (
     <Card className="border-none shadow-none bg-transparent">
-      <CardHeader className="px-0 pt-0 flex flex-row items-center justify-between space-y-0 pb-6">
+      <CardHeader className="px-0 pt-0 flex flex-row items-center justify-between space-y-0">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

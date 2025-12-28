@@ -18,14 +18,11 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
         {/* Header Section */}
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              Adressbuch
+              Omas Adressbuch
             </h1>
-            <p className="text-muted-foreground text-lg">
-              Verwalten Sie Ihre Kontakte und Adressen an einem zentralen Ort.
-            </p>
           </div>
 
           <div className="flex items-center gap-3">
