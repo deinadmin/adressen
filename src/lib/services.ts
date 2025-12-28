@@ -51,9 +51,10 @@ export const deleteAddress = async (id: string) => {
 };
 
 export const validateInvitationCode = async (code: string): Promise<boolean> => {
+  const normalizedCode = code.trim().toUpperCase();
   const q = query(
     collection(db, INVITATION_CODES_COLLECTION),
-    where("code", "==", code),
+    where("code", "==", normalizedCode),
     where("isValid", "==", true),
     limit(1)
   );
@@ -62,9 +63,10 @@ export const validateInvitationCode = async (code: string): Promise<boolean> => 
 };
 
 export const getInvitationCode = async (code: string) => {
+  const normalizedCode = code.trim().toUpperCase();
   const q = query(
     collection(db, INVITATION_CODES_COLLECTION),
-    where("code", "==", code),
+    where("code", "==", normalizedCode),
     limit(1)
   );
   const snapshot = await getDocs(q);
@@ -78,8 +80,9 @@ export const addBulkAddresses = async (addresses: Omit<Address, "id" | "createdA
 };
 
 export const createInvitationCode = async (code: string, description: string = "Generiert über App") => {
+  const normalizedCode = code.trim().toUpperCase();
   return await addDoc(collection(db, INVITATION_CODES_COLLECTION), {
-    code,
+    code: normalizedCode,
     isValid: true,
     description,
     createdAt: serverTimestamp(),

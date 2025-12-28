@@ -76,14 +76,11 @@ export const InviteModal = ({ open, onOpenChange }: InviteModalProps) => {
         {!createdLink ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                Einladungscode
-              </label>
               <Input
                 placeholder="Z.B. MAX010199"
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="text-center text-lg font-bold tracking-widest h-12 rounded-full h-12"
+                className="mt-3 text-center text-lg font-bold tracking-widest h-12 rounded-full h-12"
               />
             </div>
             <Button

@@ -174,11 +174,11 @@ export const AddressDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden rounded-[2.5rem] border-none shadow-2xl p-0">
+      <DialogContent className="sm:max-w-xl rounded-[2.5rem] border-none shadow-2xl p-0">
         <motion.div
           layout
           transition={{ type: "spring", duration: 0.5, bounce: 0.1 }}
-          className="p-6"
+          className=""
         >
           <DialogHeader className="mb-4 flex items-center justify-center h-8">
             <DialogTitle className="text-xl font-bold tracking-tight">

@@ -37,6 +37,7 @@ import {
   Pencil,
   ChevronDown,
   FileSpreadsheet,
+  Plus,
   Check
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -178,6 +179,16 @@ export const AddressList = () => {
           />
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={() => {
+              setEditingAddress(null);
+              setIsAddressDialogOpen(true);
+            }}
+            className="hidden md:flex bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 rounded-full px-4 h-11 shadow-sm transition-all hover:shadow-md font-medium"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Adresse hinzufügen
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

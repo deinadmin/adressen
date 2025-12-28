@@ -52,7 +52,7 @@ export default function Home() {
         <AddressList />
 
         {/* Floating Action Button */}
-        <div className="fixed bottom-8 right-8 md:bottom-12 md:right-12">
+        <div className="fixed bottom-8 right-8 md:hidden">
           <Button
             onClick={() => setIsAddDialogOpen(true)}
             size="icon"

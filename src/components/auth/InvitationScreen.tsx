@@ -78,7 +78,7 @@ export const InvitationScreen = () => {
               <Input
                 placeholder="Einladungscode"
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
                 className="text-center text-lg tracking-widest uppercase rounded-full h-12"
                 disabled={isValidating}
               />
