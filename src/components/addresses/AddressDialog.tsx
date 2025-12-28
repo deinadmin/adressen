@@ -122,6 +122,7 @@ export const AddressDialog = ({
       setTimeout(() => form.setFocus("houseNumber"), 300);
     } else {
       toast.success("Adresse übernommen");
+      setShowManual(true);
     }
   };
 
