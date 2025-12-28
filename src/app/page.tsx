@@ -5,11 +5,14 @@ import { useAuth } from "@/context/AuthContext";
 import { AddressList } from "@/components/addresses/AddressList";
 import { AddressDialog } from "@/components/addresses/AddressDialog";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Plus } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { InviteModal } from "@/components/auth/InviteModal";
+import { LogOut, Plus, UserPlus } from "lucide-react";
 
 export default function Home() {
   const { logout } = useAuth();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-background">
@@ -26,6 +29,15 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsInviteModalOpen(true)}
+              className="rounded-full px-4 text-muted-foreground"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Einladen
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -55,6 +67,11 @@ export default function Home() {
         <AddressDialog
           open={isAddDialogOpen}
           onOpenChange={setIsAddDialogOpen}
+        />
+
+        <InviteModal
+          open={isInviteModalOpen}
+          onOpenChange={setIsInviteModalOpen}
         />
       </div>
     </main>

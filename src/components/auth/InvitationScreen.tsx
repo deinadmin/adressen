@@ -1,17 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export const InvitationScreen = () => {
   const [code, setCode] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const { login } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const inviteCode = searchParams.get("invite");
+    if (inviteCode && !isValidating) {
+      setCode(inviteCode);
+      handleAutoLogin(inviteCode);
+    }
+  }, [searchParams]);
+
+  const handleAutoLogin = async (inviteCode: string) => {
+    setIsValidating(true);
+    try {
+      const success = await login(inviteCode);
+      if (success) {
+        toast.success("Automatisch angemeldet!");
+        router.replace("/");
+      } else {
+        toast.error("Automatischer Login fehlgeschlagen: Code ungültig");
+      }
+    } catch (error) {
+      toast.error("Fehler beim automatischen Login");
+    } finally {
+      setIsValidating(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +62,7 @@ export const InvitationScreen = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md border-none shadow-2xl bg-card/50 backdrop-blur-sm">
+      <Card className="w-full max-w-md border-none shadow-2xl bg-card/50 backdrop-blur-sm rounded-3xl overflow-hidden">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
             <Lock className="w-6 h-6 text-primary" />
@@ -51,7 +79,7 @@ export const InvitationScreen = () => {
                 placeholder="Einladungscode"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="text-center text-lg tracking-widest uppercase"
+                className="text-center text-lg tracking-widest uppercase rounded-full h-12"
                 disabled={isValidating}
               />
             </div>

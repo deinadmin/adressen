@@ -36,8 +36,10 @@ import {
   Trash2,
   Pencil,
   ChevronDown,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Check
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { subscribeToAddresses, deleteAddress } from "@/lib/services";
 import { Address } from "@/types";
 import {
@@ -58,6 +60,29 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
+import Image from "next/image";
+import excelIcon from "@/app/excel.svg";
+import sheetsIcon from "@/app/sheets.svg";
+
+const ExcelLogo = () => (
+  <Image
+    src={excelIcon}
+    alt="Excel Logo"
+    width={16}
+    height={16}
+    className="object-contain"
+  />
+);
+
+const SheetsLogo = () => (
+  <Image
+    src={sheetsIcon}
+    alt="Sheets Logo"
+    width={14}
+    height={14}
+    className="object-contain"
+  />
+);
 
 export const AddressList = () => {
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -70,6 +95,7 @@ export const AddressList = () => {
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToAddresses((data) => {
@@ -87,10 +113,13 @@ export const AddressList = () => {
   }, [addresses, searchQuery]);
 
   const handleCopy = async (addr: Address) => {
+    if (!addr.id) return;
     const formatted = formatAddressAsString(addr);
     const success = await copyToClipboard(formatted);
     if (success) {
       toast.success("Adresse kopiert");
+      setCopiedId(addr.id);
+      setTimeout(() => setCopiedId(null), 800);
     } else {
       toast.error("Kopieren fehlgeschlagen");
     }
@@ -145,7 +174,7 @@ export const AddressList = () => {
             placeholder="Suchen nach Name, Stadt, PLZ, Land..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-card/50"
+            className="pl-10 bg-card/50 rounded-full h-11"
           />
         </div>
         <div className="flex gap-2">
@@ -153,8 +182,7 @@ export const AddressList = () => {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                size="sm"
-                className="flex rounded-full px-3 md:px-4"
+                className="flex rounded-full px-3 md:px-4 h-11 shadow-sm transition-all hover:shadow-md"
                 disabled={filteredAddresses.length === 0}
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -162,20 +190,24 @@ export const AddressList = () => {
                 <ChevronDown className="w-4 h-4 ml-2 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-48 rounded-2xl border-none shadow-2xl">
               <DropdownMenuLabel>Format wählen</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => exportToExcel(filteredAddresses)}>
-                <FileSpreadsheet className="w-4 h-4 mr-2 text-green-600" />
-                Excel (.xlsx)
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => exportToCSV(filteredAddresses)}>
-                <Download className="w-4 h-4 mr-2 text-blue-600" />
+                <div className="w-6 flex items-center justify-center mr-2">
+                  <Download className="w-4 h-4 text-foreground" />
+                </div>
                 CSV (.csv)
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => exportToExcel(filteredAddresses)}>
+                <div className="w-6 flex items-center justify-center mr-2">
+                  <ExcelLogo />
+                </div>
+                Excel (.xlsx)
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleOpenSheetsModal}>
-                <div className="w-4 h-4 mr-2 flex items-center justify-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-sm" />
+                <div className="w-6 flex items-center justify-center mr-2">
+                  <SheetsLogo />
                 </div>
                 Google Sheets
               </DropdownMenuItem>
@@ -184,7 +216,7 @@ export const AddressList = () => {
         </div>
       </CardHeader>
       <CardContent className="px-0">
-        <div className="rounded-xl border bg-card/50 overflow-hidden">
+        <div className="rounded-2xl border bg-card/50 overflow-hidden">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
@@ -223,9 +255,22 @@ export const AddressList = () => {
                           size="icon"
                           onClick={() => handleCopy(addr)}
                           title="Kopieren"
-                          className="h-8 w-8 md:h-10 md:w-10 rounded-full"
+                          className="h-8 w-8 md:h-10 md:w-10 rounded-full transition-all duration-300 relative group"
                         >
-                          <Copy className="h-4 w-4" />
+                          <div className="relative h-4 w-4">
+                            <Check
+                              className={cn(
+                                "h-4 w-4 text-green-500 absolute inset-0 transition-all duration-300 scale-0 opacity-0",
+                                copiedId === addr.id && "scale-100 opacity-100"
+                              )}
+                            />
+                            <Copy
+                              className={cn(
+                                "h-4 w-4 absolute inset-0 transition-all duration-300 scale-100 opacity-100",
+                                copiedId === addr.id && "scale-0 opacity-0"
+                              )}
+                            />
+                          </div>
                         </Button>
                         <Button
                           variant="ghost"

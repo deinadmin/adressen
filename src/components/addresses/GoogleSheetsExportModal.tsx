@@ -48,7 +48,7 @@ export const GoogleSheetsExportModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px]">
+      <DialogContent className="sm:max-w-[400px] rounded-3xl border-none shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">Google Sheets Export</DialogTitle>
         </DialogHeader>
@@ -113,7 +113,7 @@ export const GoogleSheetsExportModal = ({
           </div>
         </div>
 
-        <div className="bg-muted/30 p-4 rounded-xl flex items-start gap-3 border border-border/50">
+        <div className="bg-muted/30 p-4 rounded-2xl flex items-start gap-3 border border-border/50">
           <div className="w-5 h-5 bg-green-500/10 rounded flex items-center justify-center mt-0.5">
             <ClipboardCheck className="w-3 h-3 text-green-600" />
           </div>

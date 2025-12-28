@@ -61,7 +61,27 @@ export const validateInvitationCode = async (code: string): Promise<boolean> => 
   return !snapshot.empty;
 };
 
+export const getInvitationCode = async (code: string) => {
+  const q = query(
+    collection(db, INVITATION_CODES_COLLECTION),
+    where("code", "==", code),
+    limit(1)
+  );
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as InvitationCode;
+};
+
 export const addBulkAddresses = async (addresses: Omit<Address, "id" | "createdAt" | "updatedAt">[]) => {
   const promises = addresses.map((address) => addAddress(address));
   return await Promise.all(promises);
+};
+
+export const createInvitationCode = async (code: string, description: string = "Generiert über App") => {
+  return await addDoc(collection(db, INVITATION_CODES_COLLECTION), {
+    code,
+    isValid: true,
+    description,
+    createdAt: serverTimestamp(),
+  });
 };

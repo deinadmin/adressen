@@ -64,7 +64,17 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
       }
       setIsLoading(true);
       const results = await searchAddress(query, selectedCountry);
-      setSuggestions(results);
+
+      // De-duplicate results based on key address components
+      const uniqueResults = results.filter((result, index, self) => {
+        const key = `${result.address.road}-${result.address.house_number}-${result.address.postcode}-${result.address.city || result.address.town || result.address.village}`;
+        return index === self.findIndex((r) => {
+          const rKey = `${r.address.road}-${r.address.house_number}-${r.address.postcode}-${r.address.city || r.address.town || r.address.village}`;
+          return rKey === key;
+        });
+      });
+
+      setSuggestions(uniqueResults);
       setIsLoading(false);
     },
     [selectedCountry]
@@ -104,10 +114,10 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
       <div className="flex flex-col gap-3">
         <div className="w-full">
           <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-            <SelectTrigger className="rounded-xl bg-card/50 w-full">
+            <SelectTrigger className="rounded-full bg-card/50 w-full">
               <SelectValue placeholder="Land wählen" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-2xl border-none shadow-2xl">
               {COUNTRIES.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   {country.label}
@@ -124,7 +134,7 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="w-full justify-between rounded-xl bg-card/50 px-3 font-normal h-10"
+                className="w-full justify-between rounded-full bg-card/50 px-3 font-normal h-10"
               >
                 <div className="flex items-center gap-2 overflow-hidden">
                   <Search className="h-4 w-4 shrink-0 opacity-50" />
@@ -135,8 +145,8 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-              <Command shouldFilter={false}>
+            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 rounded-3xl border-none overflow-hidden shadow-2xl" align="start">
+              <Command shouldFilter={false} className="rounded-2xl">
                 <CommandInput
                   placeholder="Adresse eingeben..."
                   value={inputValue}
@@ -148,25 +158,43 @@ export function AddressAutocomplete({ onAddressSelect, defaultCountry = "Deutsch
                       <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                     </div>
                   )}
+                  {!isLoading && !inputValue && (
+                    <div className="py-6 text-center text-sm text-muted-foreground">
+                      Beginne zu schreiben, um Vorschläge zu erhalten.
+                    </div>
+                  )}
                   {!isLoading && inputValue.length > 0 && suggestions.length === 0 && (
                     <CommandEmpty>Keine Adresse gefunden.</CommandEmpty>
                   )}
                   <CommandGroup>
-                    {suggestions.map((result) => (
-                      <CommandItem
-                        key={result.place_id}
-                        value={result.display_name}
-                        onSelect={() => handleSelect(result)}
-                        className="flex flex-col items-start py-3"
-                      >
-                        <span className="font-medium text-sm leading-tight line-clamp-1">
-                          {result.address.road} {result.address.house_number}
-                        </span>
-                        <span className="text-xs text-muted-foreground line-clamp-1">
-                          {result.address.postcode} {result.address.city || result.address.town || result.address.village}, {COUNTRIES.find(c => c.code === selectedCountry)?.label}
-                        </span>
-                      </CommandItem>
-                    ))}
+                    {suggestions.map((result) => {
+                      const cityName = result.address.city || result.address.town || result.address.village;
+                      const hasRoad = !!result.address.road;
+
+                      return (
+                        <CommandItem
+                          key={result.place_id}
+                          value={result.display_name}
+                          onSelect={() => handleSelect(result)}
+                          className="flex flex-col items-start py-3"
+                        >
+                          <span className="font-medium text-sm leading-tight line-clamp-1">
+                            {hasRoad ? (
+                              <>{result.address.road} {result.address.house_number}</>
+                            ) : (
+                              <>{cityName}</>
+                            )}
+                          </span>
+                          <span className="text-xs text-muted-foreground line-clamp-1">
+                            {hasRoad ? (
+                              <>{result.address.postcode} {cityName}, {COUNTRIES.find(c => c.code === selectedCountry)?.label}</>
+                            ) : (
+                              <>{result.address.postcode} {COUNTRIES.find(c => c.code === selectedCountry)?.label}</>
+                            )}
+                          </span>
+                        </CommandItem>
+                      );
+                    })}
                   </CommandGroup>
                 </CommandList>
               </Command>
