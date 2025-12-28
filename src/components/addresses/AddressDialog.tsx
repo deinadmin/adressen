@@ -22,10 +22,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, UserPlus } from "lucide-react";
+import { Upload, UserPlus, ChevronDown, ChevronUp } from "lucide-react";
 import { addAddress, updateAddress, addBulkAddresses } from "@/lib/services";
 import { toast } from "sonner";
 import { Address } from "@/types";
+import { AddressAutocomplete } from "./AddressAutocomplete";
 
 const addressSchema = z.object({
   firstName: z.string().min(1, "Vorname ist erforderlich"),
@@ -52,6 +53,7 @@ export const AddressDialog = ({
 }: AddressDialogProps) => {
   const [bulkData, setBulkData] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showManual, setShowManual] = useState(false);
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressSchema),
@@ -78,6 +80,7 @@ export const AddressDialog = ({
         city: address.city,
         country: address.country,
       });
+      setShowManual(true);
     } else if (!open) {
       // Small delay to prevent visual jump while closing
       const timer = setTimeout(() => {
@@ -91,10 +94,27 @@ export const AddressDialog = ({
           country: "Deutschland",
         });
         setBulkData("");
+        setShowManual(false);
       }, 500);
       return () => clearTimeout(timer);
     }
   }, [address, open, form]);
+
+  const handleAutocompleteSelect = (data: Partial<Address>) => {
+    form.setValue("street", data.street || "");
+    form.setValue("houseNumber", data.houseNumber || "");
+    form.setValue("zipCode", data.zipCode || "");
+    form.setValue("city", data.city || "");
+    form.setValue("country", data.country || "Deutschland");
+
+    // Auto-open manual fields if house number is missing or for verification
+    if (!data.houseNumber) {
+      setShowManual(true);
+      toast.info("Bitte ergänzen Sie die Hausnummer.");
+    } else {
+      toast.success("Adresse übernommen");
+    }
+  };
 
   const onSubmitNormal = async (data: AddressFormValues) => {
     setIsSubmitting(true);
@@ -165,7 +185,8 @@ export const AddressDialog = ({
 
           <TabsContent value="normal">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmitNormal)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmitNormal)} className="space-y-6">
+                {/* 1. Name Section */}
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -174,7 +195,7 @@ export const AddressDialog = ({
                       <FormItem>
                         <FormLabel>Vorname</FormLabel>
                         <FormControl>
-                          <Input placeholder="Max" {...field} />
+                          <Input placeholder="Max" className="rounded-xl bg-card/50" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -187,7 +208,7 @@ export const AddressDialog = ({
                       <FormItem>
                         <FormLabel>Nachname</FormLabel>
                         <FormControl>
-                          <Input placeholder="Mustermann" {...field} />
+                          <Input placeholder="Mustermann" className="rounded-xl bg-card/50" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -195,83 +216,123 @@ export const AddressDialog = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="street"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Straße</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Musterstraße" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                {/* 2. Autocomplete Section */}
+                {!address && (
+                  <div className="space-y-2">
+                    <FormLabel>Adresse suchen</FormLabel>
+                    <AddressAutocomplete
+                      onAddressSelect={handleAutocompleteSelect}
+                      defaultCountry={form.getValues("country")}
                     />
+                    <p className="text-[10px] text-muted-foreground italic">
+                      Daten von OpenStreetMap (Nominatim)
+                    </p>
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="houseNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nr.</FormLabel>
-                        <FormControl>
-                          <Input placeholder="12a" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                )}
 
-                <div className="grid grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="zipCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>PLZ</FormLabel>
-                        <FormControl>
-                          <Input placeholder="12345" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="col-span-2">
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Stadt</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Musterstadt" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                {/* 3. Manual Fields Toggle */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-muted-foreground uppercase text-[10px] tracking-widest font-bold">
+                      Address-Details
+                    </FormLabel>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowManual(!showManual)}
+                      className="h-7 text-xs rounded-full hover:bg-muted"
+                    >
+                      {showManual ? (
+                        <>Weniger Anzeigen <ChevronUp className="w-3 h-3 ml-1" /></>
+                      ) : (
+                        <>Manuell bearbeiten <ChevronDown className="w-3 h-3 ml-1" /></>
                       )}
-                    />
+                    </Button>
                   </div>
-                </div>
 
-                <FormField
-                  control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Land</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Deutschland" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  {showManual && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="grid grid-cols-4 gap-4">
+                        <div className="col-span-3">
+                          <FormField
+                            control={form.control}
+                            name="street"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Straße</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Musterstraße" className="rounded-xl bg-card/50" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="houseNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nr.</FormLabel>
+                              <FormControl>
+                                <Input placeholder="12a" className="rounded-xl bg-card/50" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="zipCode"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>PLZ</FormLabel>
+                              <FormControl>
+                                <Input placeholder="12345" className="rounded-xl bg-card/50" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="col-span-2">
+                          <FormField
+                            control={form.control}
+                            name="city"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Stadt</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Musterstadt" className="rounded-xl bg-card/50" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Land</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Deutschland" className="rounded-xl bg-card/50" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   )}
-                />
+                </div>
 
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full rounded-full h-12 text-lg font-bold shadow-lg" disabled={isSubmitting}>
                   {isSubmitting ? "Speichern..." : address ? "Änderungen speichern" : "Adresse speichern"}
                 </Button>
               </form>
@@ -280,19 +341,19 @@ export const AddressDialog = ({
 
           {!address && (
             <TabsContent value="bulk" className="space-y-4">
-              <div className="bg-muted p-4 rounded-md text-sm text-muted-foreground whitespace-pre-wrap">
+              <div className="bg-muted p-4 rounded-xl text-sm text-muted-foreground whitespace-pre-wrap border border-border/50">
                 Geben Sie die Daten im Format:{"\n"}
                 Vorname, Nachname, Straße, Hausnummer, PLZ, Stadt, Land{"\n"}
                 (eine Adresse pro Zeile) ein.
               </div>
               <Textarea
                 placeholder="Max, Mustermann, Musterstraße, 1, 12345, Berlin, Deutschland"
-                className="w-full min-h-[200px] font-mono text-xs break-all [field-sizing:manual]"
+                className="w-full min-h-[200px] font-mono text-xs break-all [field-sizing:manual] rounded-xl bg-card/50"
                 value={bulkData}
                 onChange={(e) => setBulkData(e.target.value)}
               />
               <Button
-                className="w-full"
+                className="w-full rounded-full h-12 text-lg font-bold shadow-lg"
                 onClick={onSubmitBulk}
                 disabled={isSubmitting || !bulkData.trim()}
               >
