@@ -37,7 +37,7 @@ export const InviteModal = ({ open, onOpenChange }: InviteModalProps) => {
         await createInvitationCode(cleanCode);
       }
 
-      const link = `https://adressen.vercel.app/?invite=${encodeURIComponent(cleanCode)}`;
+      const link = `https://omasadressbuch.designedbycarl.de/?invite=${encodeURIComponent(cleanCode)}`;
       setCreatedLink(link);
       toast.success(existing ? "Einladung bereits vorhanden - Link generiert" : "Einladungscode erstellt!");
     } catch (error) {
