@@ -21,6 +21,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { InvitationGuard } from "@/components/auth/InvitationGuard";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { DomainMigrationModal } from "@/components/auth/DomainMigrationModal";
 
 export default function RootLayout({
   children,
@@ -42,6 +43,7 @@ export default function RootLayout({
             <InvitationGuard>
               {children}
             </InvitationGuard>
+            <DomainMigrationModal />
             <Toaster position="top-center" richColors />
           </AuthProvider>
         </ThemeProvider>

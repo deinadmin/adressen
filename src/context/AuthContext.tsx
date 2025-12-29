@@ -6,6 +6,7 @@ import { validateInvitationCode } from "@/lib/services";
 interface SelectionContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
+  token: string | null;
   login: (code: string) => Promise<boolean>;
   logout: () => void;
 }
@@ -15,6 +16,7 @@ const AuthContext = createContext<SelectionContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("invitation_token");
@@ -22,6 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // For now, we assume the token is valid if it exists. 
       // In a real app, you might want to re-validate it periodically.
       setIsAuthenticated(true);
+      setToken(savedToken);
     }
     setIsLoading(false);
   }, []);
@@ -31,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isValid) {
       localStorage.setItem("invitation_token", code);
       setIsAuthenticated(true);
+      setToken(code);
       return true;
     }
     return false;
@@ -39,10 +43,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     localStorage.removeItem("invitation_token");
     setIsAuthenticated(false);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
